@@ -1,4 +1,14 @@
 {
-  "nextId": 1,
-  "issues": []
+  "nextId": 2,
+  "issues": [
+    {
+      "id": 1,
+      "title": "first",
+      "description": "first issue occurred",
+      "status": "Open",
+      "createdBy": "ana",
+      "createdAt": "2025-10-08T04:07:25.439Z",
+      "comments": []
+    }
+  ]
 }
