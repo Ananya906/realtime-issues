@@ -24,6 +24,12 @@
     "description": "now this is second issue",
     "status": "Open",
     "createdBy": "ram",
-    "comments": []
+    "comments": [
+      {
+        "user": "sham",
+        "comment": "ok",
+        "time": "2025-10-08T04:31:39.719Z"
+      }
+    ]
   }
 ]
