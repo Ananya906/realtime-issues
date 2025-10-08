@@ -5,6 +5,12 @@
     "description": "frist issue",
     "status": "Open",
     "createdBy": "ananya",
-    "comments": []
+    "comments": [
+      {
+        "user": "ram",
+        "comment": "okay ur first issue",
+        "time": "2025-10-08T04:15:56.375Z"
+      }
+    ]
   }
 ]
