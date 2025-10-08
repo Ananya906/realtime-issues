@@ -2,35 +2,170 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Real-Time Issue Tracker</title>
   <style>
-    body { font-family: Arial; margin: 20px; background: #f7f7f7; }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { padding: 8px; border: 1px solid #ccc; }
-    th { background: #333; color: white; }
-    .comment { margin-left: 20px; font-size: 0.9em; color: gray; }
-    input, textarea { width: 100%; margin: 5px 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f0f8ff, #94e1ec); /* soft pastel gradient */
+      color: #333;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      width: 100%;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #444;
+    }
+
+    /* Form card */
+    .form-card {
+      background-color: #ffffff; /* white form */
+      padding: 25px 35px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 40px;
+    }
+
+    .form-card input, 
+    .form-card textarea, 
+    .form-card button {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    .form-card input::placeholder,
+    .form-card textarea::placeholder {
+      color: #999;
+    }
+
+    .form-card button {
+      background-color: #3acbef; /* soft orange */
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      color: #fff;
+      transition: background-color 0.2s;
+    }
+
+    .form-card button:hover {
+      background-color: #75d2e7;
+    }
+
+    /* Table */
+    .table-container {
+      width: 100%;
+      max-width: 1000px;
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background-color: #ffffff; /* white table */
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      color: #333;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* Status colors (light pastel) */
+    .status-open { 
+      background-color: #d1ffd6; /* pastel green */ 
+      color: #333;
+      font-weight: bold;
+    }
+    .status-in-progress { 
+      background-color: #fff3b0; /* pastel yellow */ 
+      color: #333;
+      font-weight: bold;
+    }
+    .status-closed { 
+      background-color: #ffcccc; /* pastel red */ 
+      color: #333;
+      font-weight: bold;
+    }
+
+    /* Buttons */
+    button.status-btn {
+      margin-right: 5px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+      color: #333;
+    }
+
+    button.in-progress { background-color: #fff3b0; }
+    button.in-progress:hover { background-color: #ffe680; }
+
+    button.close { background-color: #ffcccc; }
+    button.close:hover { background-color: #ff9999; }
+
+    button.comment { background-color: #d1ffd6; }
+    button.comment:hover { background-color: #aaffb8; }
   </style>
 </head>
 <body>
-  <h1>🐞 Real-Time Issue Tracker</h1>
+  <div class="container">
+    <h1>Real-Time Issue Tracker</h1>
 
-  <h3>Add New Issue</h3>
-  <form id="issueForm">
-    <input id="title" placeholder="Title" required />
-    <textarea id="description" placeholder="Description"></textarea>
-    <input id="createdBy" placeholder="Your Name" required />
-    <button type="submit">Add Issue</button>
-  </form>
+    <div class="form-card">
+      <h2>Add New Issue</h2>
+      <form id="issueForm">
+        <input type="text" id="title" placeholder="Title" required />
+        <textarea id="description" placeholder="Description" required></textarea>
+        <input type="text" id="createdBy" placeholder="Your Name" required />
+        <button type="submit">Add Issue</button>
+      </form>
+    </div>
 
-  <h3>Issues</h3>
-  <table id="issuesTable">
-    <thead>
-      <tr><th>ID</th><th>Title</th><th>Status</th><th>Created By</th><th>Comments</th><th>Actions</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <div class="table-container">
+      <table id="issuesTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Created By</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
-  <script src="client.js"></script>
+  <script src="/client.js"></script>
 </body>
 </html>

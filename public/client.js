@@ -1,36 +1,40 @@
-const tableBody = document.querySelector("#issuesTable tbody");
-const ws = new WebSocket(`ws://${location.host}`);
-let issues = [];
+const ws = new WebSocket(`ws://${window.location.host}`);
+const table = document.querySelector("#issuesTable tbody");
+const form = document.getElementById("issueForm");
 
-function render() {
-  tableBody.innerHTML = "";
-  issues.forEach((issue) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
+function getStatusClass(status) {
+  return "status-" + status.toLowerCase().replace(" ", "-");
+}
+
+function renderIssues(issues) {
+  table.innerHTML = "";
+  issues.forEach(issue => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
       <td>${issue.id}</td>
       <td>${issue.title}</td>
-      <td>${issue.status}</td>
+      <td>${issue.description}</td>
+      <td class="${getStatusClass(issue.status)}">${issue.status}</td>
       <td>${issue.createdBy}</td>
-      <td>${issue.comments.map(c => `<div class='comment'>${c.user}: ${c.comment}</div>`).join("")}</td>
       <td>
-        <button onclick="updateStatus(${issue.id}, 'In Progress')">In Progress</button>
-        <button onclick="updateStatus(${issue.id}, 'Closed')">Close</button>
-        <button onclick="addComment(${issue.id})">Comment</button>
+        <button class="status-btn in-progress" onclick="updateStatus(${issue.id}, 'In Progress')">In Progress</button>
+        <button class="status-btn close" onclick="updateStatus(${issue.id}, 'Closed')">Close</button>
+        <button class="status-btn comment" onclick="addComment(${issue.id})">Comment</button>
       </td>
     `;
-    tableBody.appendChild(tr);
+    table.appendChild(row);
   });
 }
 
-ws.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  if (data.type === "update") {
-    issues = data.issues;
-    render();
-  }
-};
+async function fetchIssues() {
+  const res = await fetch("/issues");
+  const issues = await res.json();
+  renderIssues(issues);
+}
 
-document.getElementById("issueForm").addEventListener("submit", async (e) => {
+fetchIssues();
+
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const title = document.getElementById("title").value;
   const description = document.getElementById("description").value;
@@ -39,27 +43,33 @@ document.getElementById("issueForm").addEventListener("submit", async (e) => {
   await fetch("/issues", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, description, createdBy }),
+    body: JSON.stringify({ title, description, createdBy })
   });
 
-  e.target.reset();
+  form.reset();
 });
 
 async function updateStatus(id, status) {
   await fetch(`/issues/${id}/status`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
+    body: JSON.stringify({ status })
   });
 }
 
 async function addComment(id) {
-  const user = prompt("Your name:");
-  const comment = prompt("Enter comment:");
+  const comment = prompt("Enter your comment:");
   if (!comment) return;
   await fetch(`/issues/${id}/comment`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user, comment }),
+    body: JSON.stringify({ comment })
   });
 }
+
+ws.onmessage = (message) => {
+  const data = JSON.parse(message.data);
+  if (data.type === "update") {
+    renderIssues(data.issues);
+  }
+};
