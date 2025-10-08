@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Real-time Issue Tracker</title>
+  <meta charset="UTF-8">
+  <title>Real-Time Issue Tracker</title>
   <style>
-    body { font-family: Arial; max-width: 900px; margin: 20px auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #f3f3f3; }
-    button { margin-right: 5px; }
+    body { font-family: Arial; margin: 20px; background: #f7f7f7; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { padding: 8px; border: 1px solid #ccc; }
+    th { background: #333; color: white; }
+    .comment { margin-left: 20px; font-size: 0.9em; color: gray; }
+    input, textarea { width: 100%; margin: 5px 0; }
   </style>
 </head>
 <body>
-  <h1>Real-time Issue Tracker</h1>
+  <h1>🐞 Real-Time Issue Tracker</h1>
 
-  <form id="createForm">
-    <input id="title" placeholder="Issue Title" required />
-    <input id="createdBy" placeholder="Your Name" />
-    <br /><br />
-    <textarea id="description" placeholder="Description" rows="3" cols="50"></textarea>
-    <br />
-    <button type="submit">Create Issue</button>
+  <h3>Add New Issue</h3>
+  <form id="issueForm">
+    <input id="title" placeholder="Title" required />
+    <textarea id="description" placeholder="Description"></textarea>
+    <input id="createdBy" placeholder="Your Name" required />
+    <button type="submit">Add Issue</button>
   </form>
 
+  <h3>Issues</h3>
   <table id="issuesTable">
     <thead>
-      <tr>
-        <th>ID</th><th>Title</th><th>Status</th><th>Created By</th><th>Actions</th>
-      </tr>
+      <tr><th>ID</th><th>Title</th><th>Status</th><th>Created By</th><th>Comments</th><th>Actions</th></tr>
     </thead>
     <tbody></tbody>
   </table>

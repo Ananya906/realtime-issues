@@ -1,63 +1,65 @@
-const ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host);
-let state = { issues: [] };
-
-const tbody = document.querySelector('#issuesTable tbody');
-const form = document.getElementById('createForm');
+const tableBody = document.querySelector("#issuesTable tbody");
+const ws = new WebSocket(`ws://${location.host}`);
+let issues = [];
 
 function render() {
-  tbody.innerHTML = '';
-  state.issues.forEach(issue => {
-    const tr = document.createElement('tr');
+  tableBody.innerHTML = "";
+  issues.forEach((issue) => {
+    const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${issue.id}</td>
-      <td>${issue.title}<br><small>${issue.description}</small></td>
+      <td>${issue.title}</td>
       <td>${issue.status}</td>
       <td>${issue.createdBy}</td>
+      <td>${issue.comments.map(c => `<div class='comment'>${c.user}: ${c.comment}</div>`).join("")}</td>
       <td>
-        <button onclick="updateIssue(${issue.id}, 'In Progress')">In Progress</button>
-        <button onclick="updateIssue(${issue.id}, 'Closed')">Close</button>
-        <button onclick="commentIssue(${issue.id})">Comment</button>
+        <button onclick="updateStatus(${issue.id}, 'In Progress')">In Progress</button>
+        <button onclick="updateStatus(${issue.id}, 'Closed')">Close</button>
+        <button onclick="addComment(${issue.id})">Comment</button>
       </td>
     `;
-    tbody.appendChild(tr);
+    tableBody.appendChild(tr);
   });
 }
 
-function send(action, payload) {
-  ws.send(JSON.stringify({ action, payload }));
-}
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === "update") {
+    issues = data.issues;
+    render();
+  }
+};
 
-form.addEventListener('submit', (e) => {
+document.getElementById("issueForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const title = document.getElementById('title').value;
-  const description = document.getElementById('description').value;
-  const createdBy = document.getElementById('createdBy').value;
-  send('create', { title, description, createdBy });
-  form.reset();
+  const title = document.getElementById("title").value;
+  const description = document.getElementById("description").value;
+  const createdBy = document.getElementById("createdBy").value;
+
+  await fetch("/issues", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, description, createdBy }),
+  });
+
+  e.target.reset();
 });
 
-function updateIssue(id, status) {
-  const name = prompt('Your name?');
-  send('update', { id, fields: { status }, updatedBy: name });
+async function updateStatus(id, status) {
+  await fetch(`/issues/${id}/status`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
 }
 
-function commentIssue(id) {
-  const name = prompt('Your name?');
-  const comment = prompt('Enter comment:');
-  if (comment) send('comment', { id, comment, author: name });
+async function addComment(id) {
+  const user = prompt("Your name:");
+  const comment = prompt("Enter comment:");
+  if (!comment) return;
+  await fetch(`/issues/${id}/comment`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user, comment }),
+  });
 }
-
-ws.onmessage = (e) => {
-  const msg = JSON.parse(e.data);
-  if (msg.type === 'init') state = msg.data;
-  if (msg.type === 'created') state.issues.push(msg.issue);
-  if (msg.type === 'updated') {
-    const i = state.issues.findIndex(x => x.id === msg.issue.id);
-    if (i !== -1) state.issues[i] = msg.issue;
-  }
-  if (msg.type === 'commented') {
-    const i = state.issues.findIndex(x => x.id === msg.id);
-    if (i !== -1) state.issues[i].comments.push(msg.comment);
-  }
-  render();
-};
