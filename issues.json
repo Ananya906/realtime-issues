@@ -1,5 +1,5 @@
 {
-  "nextId": 2,
+  "nextId": 3,
   "issues": [
     {
       "id": 1,
@@ -8,6 +8,15 @@
       "status": "Open",
       "createdBy": "ana",
       "createdAt": "2025-10-08T04:07:25.439Z",
+      "comments": []
+    },
+    {
+      "id": 2,
+      "title": "first",
+      "description": "my first issue",
+      "status": "Open",
+      "createdBy": "ram",
+      "createdAt": "2025-10-08T04:08:26.252Z",
       "comments": []
     }
   ]
